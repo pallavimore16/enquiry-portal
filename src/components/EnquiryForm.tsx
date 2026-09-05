@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
 
 export default function EnquiryForm({ categoryId }: { categoryId: number }) {
@@ -14,6 +15,17 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
   const [error, setError] = useState("");
   const [done, setDone] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+
+  // Check login on load, and pre-fill the email so they don't retype it.
+  useEffect(() => {
+    supabaseBrowser().auth.getUser().then(({ data }) => {
+      setLoggedIn(!!data.user);
+      if (data.user?.email) {
+        setF((prev) => ({ ...prev, email: data.user!.email! }));
+      }
+    });
+  }, []);
 
   const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
 
@@ -36,7 +48,8 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setBusy(false);
-      return setError("Please log in before sending an enquiry.");
+      setLoggedIn(false);
+      return;
     }
 
     // We only send the details. customer_id, root_category_id and status are
@@ -72,6 +85,38 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
     setDone(data.id);
   }
 
+  // ---- still checking ----
+  if (loggedIn === null) {
+    return <p className="text-sm text-slate-500">Loading…</p>;
+  }
+
+  // ---- not logged in ----
+  if (loggedIn === false) {
+    return (
+      <div className="max-w-lg rounded border border-slate-300 bg-slate-50 p-5">
+        <h2 className="font-semibold text-slate-900">Log in to send an enquiry</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          You need an account so the seller can respond to you.
+        </p>
+        <div className="mt-4 flex gap-3">
+          <Link
+            href="/login"
+            className="rounded bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900"
+          >
+            Log in
+          </Link>
+          <Link
+            href="/signup"
+            className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
+          >
+            Create account
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- sent ----
   if (done !== null) {
     return (
       <div className="max-w-lg rounded border border-teal-700 bg-teal-50 p-5">
