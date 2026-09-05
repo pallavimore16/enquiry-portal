@@ -17,22 +17,18 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
   const [busy, setBusy] = useState(false);
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
-  // Check login on load, and pre-fill the email so they don't retype it.
   useEffect(() => {
     supabaseBrowser().auth.getUser().then(({ data }) => {
       setLoggedIn(!!data.user);
-      if (data.user?.email) {
-        setF((prev) => ({ ...prev, email: data.user!.email! }));
-      }
+      if (data.user?.email) setF((p) => ({ ...p, email: data.user!.email! }));
     });
   }, []);
 
-  const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
+  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setF({ ...f, [k]: e.target.value });
 
   async function submit() {
     setError("");
-
-    // Friendly checks first. The database checks again — this is only for the messages.
     if (f.name.trim().length < 2) return setError("Enter your name.");
     if (!/^[6-9]\d{9}$/.test(f.phone)) return setError("Enter a 10-digit mobile number.");
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return setError("Enter a valid email.");
@@ -40,20 +36,14 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
     if (!f.city.trim()) return setError("Enter your city.");
     if (!f.state.trim()) return setError("Enter your state.");
     if (!/^[1-9]\d{5}$/.test(f.pincode)) return setError("Enter a 6-digit PIN code.");
-    if (!consent) return setError("Please tick the consent box.");
+    if (!consent) return setError("Tick the box to share your details with the seller.");
 
     setBusy(true);
     const supabase = supabaseBrowser();
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setBusy(false);
-      setLoggedIn(false);
-      return;
-    }
+    if (!user) { setBusy(false); setLoggedIn(false); return; }
 
-    // We only send the details. customer_id, root_category_id and status are
-    // filled in by the database trigger — the browser is not trusted with them.
     const { data, error } = await supabase
       .from("enquiries")
       .insert({
@@ -73,11 +63,10 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
       .single();
 
     setBusy(false);
-
     if (error) {
       setError(
         error.message.includes("Rate limit")
-          ? "You have sent 3 enquiries in the last hour. Please try later."
+          ? "You have sent 3 enquiries in the last hour. Try again later."
           : "Could not send: " + error.message
       );
       return;
@@ -85,30 +74,24 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
     setDone(data.id);
   }
 
-  // ---- still checking ----
   if (loggedIn === null) {
-    return <p className="text-sm text-slate-500">Loading…</p>;
+    return <p className="text-sm text-ink-soft">Loading.</p>;
   }
 
-  // ---- not logged in ----
   if (loggedIn === false) {
     return (
-      <div className="max-w-lg rounded border border-slate-300 bg-slate-50 p-5">
-        <h2 className="font-semibold text-slate-900">Log in to send an enquiry</h2>
-        <p className="mt-1 text-sm text-slate-600">
-          You need an account so the seller can respond to you.
+      <div className="max-w-lg rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
+        <h2 className="text-lg font-semibold">Log in to send an enquiry</h2>
+        <p className="mt-1.5 text-sm text-ink-soft">
+          Sellers reply by email, so we need an account to send their answer to.
         </p>
-        <div className="mt-4 flex gap-3">
-          <Link
-            href="/login"
-            className="rounded bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900"
-          >
+        <div className="mt-5 flex gap-3">
+          <Link href="/login"
+            className="rounded-[2px] bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">
             Log in
           </Link>
-          <Link
-            href="/signup"
-            className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
-          >
+          <Link href="/signup"
+            className="rounded-[2px] border border-ink px-4 py-2 text-sm font-medium hover:bg-paper">
             Create account
           </Link>
         </div>
@@ -116,21 +99,23 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
     );
   }
 
-  // ---- sent ----
   if (done !== null) {
     return (
-      <div className="max-w-lg rounded border border-teal-700 bg-teal-50 p-5">
-        <h2 className="font-semibold text-teal-900">Enquiry sent</h2>
-        <p className="mt-1 text-sm text-teal-800">
-          Your reference number is <strong>#{done}</strong>. A seller will respond by email.
+      <div className="max-w-lg rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">Enquiry sent</h2>
+            <p className="mt-1.5 text-sm text-ink-soft">
+              Keep this number for your records. A seller will reply by email.
+            </p>
+          </div>
+        </div>
+        <p className="mt-5 border-t border-rule pt-4 font-display text-2xl font-bold tabular-nums">
+          No. {String(done).padStart(6, "0")}
         </p>
       </div>
     );
   }
-
-  const box =
-    "w-full rounded border border-slate-300 px-3 py-2 " +
-    "focus:border-teal-700 focus:outline-none focus:ring-1 focus:ring-teal-700";
 
   const fields: [keyof typeof f, string, string][] = [
     ["name", "Full name", "text"],
@@ -145,44 +130,52 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
   ];
 
   return (
-    <div className="max-w-lg space-y-4">
-      <h2 className="text-lg font-semibold text-slate-900">Send an enquiry</h2>
+    /* One column, capped near 34rem — a form is read, not scanned. */
+    <div className="max-w-[34rem] rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
+      <h2 className="mb-5 border-b border-rule pb-3 text-lg font-semibold">
+        Send an enquiry
+      </h2>
 
       {error && (
-        <p className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p className="mb-4 rounded-[2px] border-l-[3px] border-stamp bg-stamp/5 px-3 py-2 text-sm text-stamp">
           {error}
         </p>
       )}
 
-      {fields.map(([key, label, type]) => (
-        <label key={key} className="block text-sm">
-          <span className="mb-1 block text-slate-700">{label}</span>
-          <input className={box} type={type} value={f[key]} onChange={set(key)} />
+      <div className="space-y-4">
+        {fields.map(([key, label, type]) => (
+          <label key={key} className="block text-sm">
+            <span className="mb-1 block font-medium">{label}</span>
+            <input type={type} value={f[key]} onChange={set(key)} />
+          </label>
+        ))}
+
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium">Message (optional)</span>
+          <textarea rows={4} value={f.message} onChange={set("message")} />
         </label>
-      ))}
 
-      <label className="block text-sm">
-        <span className="mb-1 block text-slate-700">Message (optional)</span>
-        <textarea className={box} rows={4} value={f.message} onChange={set("message")} />
-      </label>
+        <label className="flex gap-2.5 border-t border-rule pt-4 text-sm text-ink-soft">
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            className="mt-1 h-4 w-4 shrink-0 accent-[#1b2a4a]"
+          />
+          <span>
+            Share my name, address and phone number with the seller for this enquiry.
+            Kept for up to 2 years.
+          </span>
+        </label>
 
-      <label className="flex gap-2 text-sm text-slate-700">
-        <input type="checkbox" checked={consent}
-          onChange={(e) => setConsent(e.target.checked)} className="mt-1" />
-        <span>
-          I agree that my name, address and phone number will be shared with the seller for
-          this enquiry, and kept for up to 2 years.
-        </span>
-      </label>
-
-      <button
-        onClick={submit}
-        disabled={busy}
-        className="rounded bg-teal-800 px-5 py-2.5 font-medium text-white
-                   hover:bg-teal-900 disabled:opacity-50"
-      >
-        {busy ? "Sending…" : "Send enquiry"}
-      </button>
+        <button
+          onClick={submit}
+          disabled={busy}
+          className="w-full rounded-[2px] bg-ink py-2.5 font-medium text-paper hover:opacity-90 disabled:opacity-50"
+        >
+          {busy ? "Sending" : "Send enquiry"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function SignupPage() {
   async function handleSignup() {
     setError("");
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError("Use at least 8 characters for your password.");
       return;
     }
     setBusy(true);
@@ -29,47 +29,53 @@ export default function SignupPage() {
     });
 
     setBusy(false);
-    if (error) {
-      setError(error.message);
-      return;
-    }
+    if (error) { setError(error.message); return; }
+
     router.push("/c");
     router.refresh();
   }
 
-  const box =
-    "w-full rounded border border-slate-300 px-3 py-2 mb-3 " +
-    "focus:border-teal-700 focus:outline-none focus:ring-1 focus:ring-teal-700";
-
   return (
     <main className="mx-auto max-w-sm px-5 py-16">
-      <h1 className="mb-6 text-2xl font-semibold">Create an account</h1>
-
-      {error && (
-        <p className="mb-3 rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
-          {error}
+      <div className="rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
+        <h1 className="mb-1 text-xl font-bold">Create an account</h1>
+        <p className="mb-5 border-b border-rule pb-3 text-sm text-ink-soft">
+          Needed so sellers can reply to your enquiries.
         </p>
-      )}
 
-      <input className={box} placeholder="Your name"
-        value={name} onChange={(e) => setName(e.target.value)} />
-      <input className={box} type="email" placeholder="Email"
-        value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input className={box} type="password" placeholder="Password (8+ characters)"
-        value={password} onChange={(e) => setPassword(e.target.value)} />
+        {error && (
+          <p className="mb-4 rounded-[2px] border-l-[3px] border-stamp bg-stamp/5 px-3 py-2 text-sm text-stamp">
+            {error}
+          </p>
+        )}
 
-      <button
-        onClick={handleSignup}
-        disabled={busy}
-        className="w-full rounded bg-teal-800 py-2.5 font-medium text-white
-                   hover:bg-teal-900 disabled:opacity-50"
-      >
-        {busy ? "Creating…" : "Create account"}
-      </button>
+        <div className="space-y-4">
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium">Your name</span>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium">Email</span>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium">Password</span>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <span className="mt-1 block text-xs text-ink-soft">At least 8 characters.</span>
+          </label>
+          <button
+            onClick={handleSignup}
+            disabled={busy}
+            className="w-full rounded-[2px] bg-ink py-2.5 font-medium text-paper hover:opacity-90 disabled:opacity-50"
+          >
+            {busy ? "Creating" : "Create account"}
+          </button>
+        </div>
+      </div>
 
-      <p className="mt-5 text-sm text-slate-600">
-        Already have an account?{" "}
-        <Link href="/login" className="text-teal-800 underline">Log in</Link>
+      <p className="mt-5 text-center text-sm text-ink-soft">
+        Already registered?{" "}
+        <Link href="/login" className="text-ink underline underline-offset-4">Log in</Link>
       </p>
     </main>
   );

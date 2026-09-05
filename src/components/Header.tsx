@@ -9,31 +9,27 @@ export default async function Header() {
   let role: string | null = null;
   if (user) {
     const { data } = await db
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+      .from("profiles").select("role").eq("id", user.id).maybeSingle();
     role = data?.role ?? null;
   }
 
-  const link = "text-sm text-slate-600 hover:text-teal-800";
+  const quiet = "text-sm text-ink-soft hover:text-ink";
 
   return (
-    <header className="border-b border-slate-200">
-      <div className="mx-auto flex max-w-5xl items-center gap-5 px-5 py-3">
-        <Link href="/c" className="font-semibold text-slate-900">
+    /* Double rule under the letterhead, the way a form separates its header. */
+    <header className="border-b-[3px] border-double border-ink bg-sheet">
+      <div className="mx-auto flex max-w-5xl items-center gap-6 px-5 py-3">
+        <Link href="/c" className="font-display text-lg font-bold tracking-tight">
           Enquiry Portal
         </Link>
 
         <div className="ml-auto flex items-center gap-5">
           {!user ? (
             <>
-              <Link href="/login" className={link}>
-                Log in
-              </Link>
+              <Link href="/login" className={quiet}>Log in</Link>
               <Link
                 href="/signup"
-                className="rounded bg-teal-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-900"
+                className="rounded-[2px] bg-ink px-3 py-1.5 text-sm font-medium text-paper hover:opacity-90"
               >
                 Create account
               </Link>
@@ -41,15 +37,11 @@ export default async function Header() {
           ) : (
             <>
               {(role === "SELLER" || role === "ADMIN") && (
-                <Link href="/seller" className={link}>
-                  Enquiries
-                </Link>
+                <Link href="/seller" className={quiet}>Enquiries</Link>
               )}
-              <span className="hidden text-sm text-slate-500 sm:inline">
-                {user.email}
-              </span>
+              <span className="hidden text-sm text-ink-soft sm:inline">{user.email}</span>
               <form action={signOut}>
-                <button className={link}>Log out</button>
+                <button className={quiet}>Log out</button>
               </form>
             </>
           )}

@@ -9,7 +9,7 @@ export default async function SellerPage({
   const { status = "PENDING" } = await searchParams;
   const db = await supabaseServer();
 
-  // No "where seller_id = me" here. Row-level security adds it in the database.
+  // No "where seller_id = me". Row-level security adds it in the database.
   const { data: rows } = await db
     .from("enquiries")
     .select("id, created_at, city, quantity, status, category_id")
@@ -17,48 +17,67 @@ export default async function SellerPage({
     .order("created_at", { ascending: false })
     .limit(50);
 
-  const tabs = ["PENDING", "APPROVED", "REJECTED"];
+  const tabs = [
+    ["PENDING", "Pending"],
+    ["APPROVED", "Approved"],
+    ["REJECTED", "Rejected"],
+  ];
+
+  const empty: Record<string, string> = {
+    PENDING: "No enquiries waiting. New ones appear here as they arrive.",
+    APPROVED: "Nothing approved yet.",
+    REJECTED: "Nothing rejected yet.",
+  };
 
   return (
-    <main className="mx-auto max-w-4xl px-5 py-8">
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">Enquiries</h1>
+    <main className="mx-auto max-w-4xl px-5 py-10">
+      <h1 className="mb-6 text-2xl font-bold">Enquiries</h1>
 
-      <div className="mb-6 flex gap-2">
-        {tabs.map((t) => (
+      {/* Tabs as a file divider: the open one connects to the sheet below it. */}
+      <div className="flex gap-1 border-b-2 border-ink">
+        {tabs.map(([key, label]) => (
           <Link
-            key={t}
-            href={`/seller?status=${t}`}
-            className={`rounded px-3 py-1.5 text-sm ${
-              t === status ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-700"
+            key={key}
+            href={`/seller?status=${key}`}
+            className={`-mb-[2px] border-2 px-4 py-2 text-sm ${
+              key === status
+                ? "border-ink border-b-paper bg-paper font-medium"
+                : "border-transparent text-ink-soft hover:text-ink"
             }`}
           >
-            {t[0] + t.slice(1).toLowerCase()}
+            {label}
           </Link>
         ))}
       </div>
 
       {!rows?.length ? (
-        <p className="text-slate-500">Nothing here.</p>
+        <p className="pt-8 text-sm text-ink-soft">{empty[status] ?? empty.PENDING}</p>
       ) : (
         <table className="w-full text-sm">
-          <thead className="border-b-2 border-slate-800 text-left">
-            <tr>
-              <th className="py-2">Ref</th>
-              <th>Date</th>
-              <th>City</th>
-              <th className="text-right">Qty</th>
-              <th></th>
+          <thead>
+            <tr className="border-b border-rule text-left text-xs text-ink-soft">
+              <th className="py-2 font-medium">No.</th>
+              <th className="font-medium">Received</th>
+              <th className="font-medium">City</th>
+              <th className="text-right font-medium">Qty</th>
+              <th />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className="border-b border-slate-200">
-                <td className="py-2.5">#{r.id}</td>
-                <td>{new Date(r.created_at).toLocaleDateString("en-IN")}</td>
-                <td>{r.city}</td>
+              <tr key={r.id} className="border-b border-rule hover:bg-sheet">
+                <td className="py-3 tabular-nums">
+                  {String(r.id).padStart(6, "0")}
+                </td>
+                <td className="text-ink-soft">
+                  {new Date(r.created_at).toLocaleDateString("en-IN", {
+                    day: "2-digit", month: "short", year: "numeric",
+                  })}
+                </td>
+                <td className="text-ink-soft">{r.city}</td>
                 <td className="text-right tabular-nums">{r.quantity}</td>
-                <td className="text-right">
-                  <Link href={`/seller/${r.id}`} className="text-teal-800 underline">
+                <td className="py-3 text-right">
+                  <Link href={`/seller/${r.id}`} className="font-medium underline underline-offset-4">
                     Open
                   </Link>
                 </td>

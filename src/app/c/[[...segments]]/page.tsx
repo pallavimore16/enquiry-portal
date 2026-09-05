@@ -10,12 +10,11 @@ export default async function CategoryPage({
   params: Promise<{ segments?: string[] }>;
 }) {
   const { segments = [] } = await params;
-
   if (segments.length > 3 || !segments.every((s) => /^\d{3}$/.test(s))) notFound();
 
   const db = await supabaseServer();
 
-  // ---------- /c : the 100 main categories ----------
+  /* ---------- /c : the whole catalogue ---------- */
   if (segments.length === 0) {
     const { data } = await db
       .from("category_view")
@@ -25,17 +24,22 @@ export default async function CategoryPage({
       .order("sort_order");
 
     return (
-      <main className="mx-auto max-w-5xl px-5 py-8">
-        <h1 className="mb-6 text-2xl font-semibold text-slate-900">Browse categories</h1>
+      <main className="mx-auto max-w-5xl px-5 py-10">
+        <header className="mb-9 max-w-xl">
+          <h1 className="text-3xl font-bold">Catalogue</h1>
+          <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+            Pick a category, narrow it down, then send your requirement to a seller.
+            You will get a reply by email.
+          </p>
+        </header>
         <ChildList items={data ?? []} />
       </main>
     );
   }
 
-  // ---------- /c/017 , /c/017/001 , /c/017/001/043 ----------
+  /* ---------- /c/017 , /c/017/001 , /c/017/001/043 ---------- */
   const [a, b, c] = segments;
-  const id =
-    Number(a) * 1_000_000 + Number(b ?? 0) * 1_000 + Number(c ?? 0);
+  const id = Number(a) * 1_000_000 + Number(b ?? 0) * 1_000 + Number(c ?? 0);
 
   const { data: node } = await db
     .from("category_view").select("*").eq("id", id).maybeSingle();
@@ -44,7 +48,7 @@ export default async function CategoryPage({
 
   const { data: crumbs } = await db.rpc("breadcrumb", { p_id: id });
 
-  let children: any[] = [];
+  let children: Parameters<typeof ChildList>[0]["items"] = [];
   if (node.level < 3) {
     const { data } = await db
       .from("category_view")
@@ -55,31 +59,38 @@ export default async function CategoryPage({
     children = data ?? [];
   }
 
+  const trail = crumbs ?? [];
+
   return (
-    <main className="mx-auto max-w-5xl px-5 py-8">
-      <nav className="mb-6 text-sm text-slate-500">
-        <Link href="/c" className="hover:text-teal-800">All categories</Link>
-        {(crumbs ?? []).map((x: any) => (
-          <span key={x.id}>
-            <span className="px-2 text-slate-300">/</span>
-            <Link href={x.url_path} className="hover:text-teal-800">{x.display_name}</Link>
+    <main className="mx-auto max-w-5xl px-5 py-10">
+      <nav className="mb-6 flex flex-wrap items-center gap-x-2 text-sm text-ink-soft">
+        <Link href="/c" className="hover:text-ink">Catalogue</Link>
+        {trail.map((x: { id: number; display_name: string; url_path: string }) => (
+          <span key={x.id} className="flex items-center gap-x-2">
+            <span className="text-rule">/</span>
+            <Link href={x.url_path} className="hover:text-ink">{x.display_name}</Link>
           </span>
         ))}
       </nav>
 
       {node.level === 3 ? (
         <>
-          <h1 className="text-2xl font-semibold text-slate-900">
-            {crumbs?.[1]?.display_name}
-          </h1>
-          <p className="mb-6 mt-1 text-slate-600">
-            {node.price_label} · {node.feature_label}
-          </p>
+          <header className="mb-8 border-b-2 border-ink pb-4">
+            <h1 className="text-2xl font-bold">{trail[1]?.display_name}</h1>
+            <p className="mt-1.5 text-sm text-ink-soft">
+              {node.price_label} &nbsp;|&nbsp; {node.feature_label}
+            </p>
+          </header>
           <EnquiryForm categoryId={node.id} />
         </>
       ) : (
         <>
-          <h1 className="mb-6 text-2xl font-semibold text-slate-900">{node.display_name}</h1>
+          <header className="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
+            <h1 className="text-2xl font-bold">{node.display_name}</h1>
+            <span className="ml-auto text-xs tabular-nums text-ink-soft">
+              {children.length} entries
+            </span>
+          </header>
           <ChildList items={children} groupByPrice={node.level === 2} />
         </>
       )}

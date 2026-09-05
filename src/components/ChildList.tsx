@@ -11,6 +11,17 @@ export type Item = {
   feature_label?: string | null;
 };
 
+/* An index, not a grid of cards: name on the left, leader dots across to the
+   right margin. The dots carry the eye across; they are structure, not decoration. */
+function Row({ label, href }: { label: string; href: string }) {
+  return (
+    <Link href={href} className="group flex items-baseline gap-2 py-2 text-[0.9375rem]">
+      <span className="text-ink-soft transition-colors group-hover:text-ink">{label}</span>
+      <span className="mb-[0.3em] flex-1 border-b border-dotted border-rule" />
+    </Link>
+  );
+}
+
 export default function ChildList({
   items,
   groupByPrice = false,
@@ -24,60 +35,59 @@ export default function ChildList({
     ? items.filter((i) => i.display_name.toLowerCase().includes(q.toLowerCase()))
     : items;
 
-  const link = "block py-2.5 text-slate-700 hover:text-teal-800";
-  const row = "border-b border-slate-200";
+  if (items.length === 0) {
+    return <p className="text-sm text-ink-soft">Nothing listed here yet.</p>;
+  }
 
   return (
     <>
       {items.length > 20 && (
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={`Search ${items.length} items`}
-          className="mb-6 w-full max-w-sm rounded border border-slate-300 px-3 py-2
-                     focus:border-teal-700 focus:outline-none focus:ring-1 focus:ring-teal-700"
-        />
+        <div className="mb-7 max-w-sm">
+          <input
+            type="text"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={`Search ${items.length} entries`}
+          />
+        </div>
       )}
 
-      {shown.length === 0 && (
-        <p className="text-slate-500">Nothing matches. Try a shorter word.</p>
-      )}
-
-      {/* Level 2: 100 children = 10 price bands x 10 features. Group them or
-          it is an unreadable wall of near-identical lines. */}
-      {groupByPrice && !q ? (
-        <div className="space-y-8">
-          {groupItems(shown).map(([price, group]) => (
+      {shown.length === 0 ? (
+        <p className="text-sm text-ink-soft">No entry matches that. Try a shorter word.</p>
+      ) : groupByPrice && !q ? (
+        <div className="space-y-9">
+          {group(shown).map(([price, rows]) => (
             <section key={price}>
-              <h2 className="mb-2 border-b-2 border-slate-800 pb-1 font-semibold text-slate-900">
-                {price}
+              <h2 className="mb-1 flex items-baseline gap-3 border-b-2 border-ink pb-1">
+                <span className="font-display text-base font-semibold">{price}</span>
+                <span className="ml-auto text-xs tabular-nums text-ink-soft">
+                  {rows.length}
+                </span>
               </h2>
-              <ul className="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
-                {group.map((c) => (
-                  <li key={c.id} className={row}>
-                    <Link href={c.url_path} className={link}>
-                      {c.feature_label ?? c.display_name}
-                    </Link>
-                  </li>
+              <div className="columns-1 sm:columns-2 sm:gap-x-10 lg:columns-3">
+                {rows.map((c) => (
+                  <div key={c.id} className="break-inside-avoid">
+                    <Row label={c.feature_label ?? c.display_name} href={c.url_path} />
+                  </div>
                 ))}
-              </ul>
+              </div>
             </section>
           ))}
         </div>
       ) : (
-        <ul className="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="columns-1 sm:columns-2 sm:gap-x-10 lg:columns-3">
           {shown.map((c) => (
-            <li key={c.id} className={row}>
-              <Link href={c.url_path} className={link}>{c.display_name}</Link>
-            </li>
+            <div key={c.id} className="break-inside-avoid">
+              <Row label={c.display_name} href={c.url_path} />
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </>
   );
 }
 
-function groupItems(items: Item[]): [string, Item[]][] {
+function group(items: Item[]): [string, Item[]][] {
   const map = new Map<string, Item[]>();
   for (const i of items) {
     const key = i.price_label ?? "Other";
