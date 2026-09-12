@@ -36,15 +36,15 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="mx-auto max-w-sm px-5 py-16">
-      <div className="rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
-        <h1 className="mb-1 text-xl font-bold">Create an account</h1>
-        <p className="mb-5 border-b border-rule pb-3 text-sm text-ink-soft">
+    <main className="mx-auto max-w-sm px-5 py-20">
+      <div className="rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+        <h1 className="mb-1 font-display text-xl font-bold">Create an account</h1>
+        <p className="mb-6 border-b border-accent/40 pb-4 text-sm text-ink-soft">
           Needed so sellers can reply to your enquiries.
         </p>
 
         {error && (
-          <p className="mb-4 rounded-[2px] border-l-[3px] border-stamp bg-stamp/5 px-3 py-2 text-sm text-stamp">
+          <p className="mb-4 rounded-lg border-l-[3px] border-reject bg-reject/5 px-3.5 py-2.5 text-sm text-reject">
             {error}
           </p>
         )}
@@ -66,16 +66,16 @@ export default function SignupPage() {
           <button
             onClick={handleSignup}
             disabled={busy}
-            className="w-full rounded-[2px] bg-ink py-2.5 font-medium text-paper hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-full bg-ink py-3 font-medium text-paper transition-opacity hover:opacity-85 disabled:opacity-50"
           >
             {busy ? "Creating" : "Create account"}
           </button>
         </div>
       </div>
 
-      <p className="mt-5 text-center text-sm text-ink-soft">
+      <p className="mt-6 text-center text-sm text-ink-soft">
         Already registered?{" "}
-        <Link href="/login" className="text-ink underline underline-offset-4">Log in</Link>
+        <Link href="/login" className="text-accent underline underline-offset-4 hover:text-ink transition-colors">Log in</Link>
       </p>
     </main>
   );

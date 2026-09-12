@@ -80,18 +80,18 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   if (loggedIn === false) {
     return (
-      <div className="max-w-lg rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
-        <h2 className="text-lg font-semibold">Log in to send an enquiry</h2>
+      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+        <h2 className="font-display text-lg font-semibold">Log in to send an enquiry</h2>
         <p className="mt-1.5 text-sm text-ink-soft">
           Sellers reply by email, so we need an account to send their answer to.
         </p>
         <div className="mt-5 flex gap-3">
           <Link href="/login"
-            className="rounded-[2px] bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">
+            className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:opacity-85 transition-opacity">
             Log in
           </Link>
           <Link href="/signup"
-            className="rounded-[2px] border border-ink px-4 py-2 text-sm font-medium hover:bg-paper">
+            className="rounded-full border border-ink px-5 py-2.5 text-sm font-medium hover:bg-paper transition-colors">
             Create account
           </Link>
         </div>
@@ -101,16 +101,16 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   if (done !== null) {
     return (
-      <div className="max-w-lg rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
+      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold">Enquiry sent</h2>
+            <h2 className="font-display text-lg font-semibold">Enquiry sent</h2>
             <p className="mt-1.5 text-sm text-ink-soft">
               Keep this number for your records. A seller will reply by email.
             </p>
           </div>
         </div>
-        <p className="mt-5 border-t border-rule pt-4 font-display text-2xl font-bold tabular-nums">
+        <p className="mt-6 border-t border-accent/40 pt-5 font-display text-2xl font-bold tabular-nums text-accent">
           No. {String(done).padStart(6, "0")}
         </p>
       </div>
@@ -131,13 +131,13 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   return (
     /* One column, capped near 34rem — a form is read, not scanned. */
-    <div className="max-w-[34rem] rounded-[2px] border border-rule border-b-2 bg-sheet p-6">
-      <h2 className="mb-5 border-b border-rule pb-3 text-lg font-semibold">
+    <div className="max-w-[34rem] rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+      <h2 className="mb-6 border-b border-accent/40 pb-4 font-display text-lg font-semibold">
         Send an enquiry
       </h2>
 
       {error && (
-        <p className="mb-4 rounded-[2px] border-l-[3px] border-stamp bg-stamp/5 px-3 py-2 text-sm text-stamp">
+        <p className="mb-4 rounded-lg border-l-[3px] border-reject bg-reject/5 px-3.5 py-2.5 text-sm text-reject">
           {error}
         </p>
       )}
@@ -145,22 +145,22 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
       <div className="space-y-4">
         {fields.map(([key, label, type]) => (
           <label key={key} className="block text-sm">
-            <span className="mb-1 block font-medium">{label}</span>
+            <span className="mb-1.5 block font-medium">{label}</span>
             <input type={type} value={f[key]} onChange={set(key)} />
           </label>
         ))}
 
         <label className="block text-sm">
-          <span className="mb-1 block font-medium">Message (optional)</span>
+          <span className="mb-1.5 block font-medium">Message (optional)</span>
           <textarea rows={4} value={f.message} onChange={set("message")} />
         </label>
 
-        <label className="flex gap-2.5 border-t border-rule pt-4 text-sm text-ink-soft">
+        <label className="flex gap-2.5 border-t border-rule pt-5 text-sm text-ink-soft">
           <input
             type="checkbox"
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
-            className="mt-1 h-4 w-4 shrink-0 accent-[#1b2a4a]"
+            className="mt-1 h-4 w-4 shrink-0 accent-[#ad56c4]"
           />
           <span>
             Share my name, address and phone number with the seller for this enquiry.
@@ -171,7 +171,7 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
         <button
           onClick={submit}
           disabled={busy}
-          className="w-full rounded-[2px] bg-ink py-2.5 font-medium text-paper hover:opacity-90 disabled:opacity-50"
+          className="w-full rounded-full bg-ink py-3 font-medium text-paper transition-opacity hover:opacity-85 disabled:opacity-50"
         >
           {busy ? "Sending" : "Send enquiry"}
         </button>

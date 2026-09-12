@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import ChildList from "@/components/ChildList";
+import CategoryGrid from "@/components/CategoryGrid";
 import EnquiryForm from "@/components/EnquiryForm";
 
 export default async function CategoryPage({
@@ -24,15 +25,18 @@ export default async function CategoryPage({
       .order("sort_order");
 
     return (
-      <main className="mx-auto max-w-5xl px-5 py-10">
-        <header className="mb-9 max-w-xl">
-          <h1 className="text-3xl font-bold">Catalogue</h1>
-          <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+      <main className="mx-auto max-w-5xl px-5 py-14">
+        <header className="mb-11 max-w-xl">
+          <p className="mb-3 font-sans text-xs uppercase tracking-[0.2em] text-accent">
+            The Catalogue
+          </p>
+          <h1 className="font-display text-4xl font-bold tracking-tight">Browse by category</h1>
+          <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink-soft">
             Pick a category, narrow it down, then send your requirement to a seller.
             You will get a reply by email.
           </p>
         </header>
-        <ChildList items={data ?? []} />
+        <CategoryGrid items={data ?? []} />
       </main>
     );
   }
@@ -62,31 +66,31 @@ export default async function CategoryPage({
   const trail = crumbs ?? [];
 
   return (
-    <main className="mx-auto max-w-5xl px-5 py-10">
-      <nav className="mb-6 flex flex-wrap items-center gap-x-2 text-sm text-ink-soft">
-        <Link href="/c" className="hover:text-ink">Catalogue</Link>
+    <main className="mx-auto max-w-5xl px-5 py-14">
+      <nav className="mb-7 flex flex-wrap items-center gap-x-2 text-sm text-ink-soft">
+        <Link href="/c" className="hover:text-accent transition-colors">Catalogue</Link>
         {trail.map((x: { id: number; display_name: string; url_path: string }) => (
           <span key={x.id} className="flex items-center gap-x-2">
-            <span className="text-rule">/</span>
-            <Link href={x.url_path} className="hover:text-ink">{x.display_name}</Link>
+            <span className="text-accent/60">/</span>
+            <Link href={x.url_path} className="hover:text-accent transition-colors">{x.display_name}</Link>
           </span>
         ))}
       </nav>
 
       {node.level === 3 ? (
         <>
-          <header className="mb-8 border-b-2 border-ink pb-4">
-            <h1 className="text-2xl font-bold">{trail[1]?.display_name}</h1>
-            <p className="mt-1.5 text-sm text-ink-soft">
-              {node.price_label} &nbsp;|&nbsp; {node.feature_label}
+          <header className="mb-9 border-b border-accent/40 pb-5">
+            <h1 className="font-display text-3xl font-bold tracking-tight">{trail[1]?.display_name}</h1>
+            <p className="mt-2 text-sm text-ink-soft">
+              {node.price_label} &nbsp;·&nbsp; {node.feature_label}
             </p>
           </header>
           <EnquiryForm categoryId={node.id} />
         </>
       ) : (
         <>
-          <header className="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
-            <h1 className="text-2xl font-bold">{node.display_name}</h1>
+          <header className="mb-9 flex items-baseline gap-4 border-b border-accent/40 pb-4">
+            <h1 className="font-display text-3xl font-bold tracking-tight">{node.display_name}</h1>
             <span className="ml-auto text-xs tabular-nums text-ink-soft">
               {children.length} entries
             </span>

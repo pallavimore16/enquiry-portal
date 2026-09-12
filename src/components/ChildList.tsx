@@ -11,13 +11,17 @@ export type Item = {
   feature_label?: string | null;
 };
 
-/* An index, not a grid of cards: name on the left, leader dots across to the
-   right margin. The dots carry the eye across; they are structure, not decoration. */
+/* An index, not a grid of cards: name on the left, an accent leader line
+   drawing the eye across to a small arrow at the margin — the way a
+   fine restaurant menu sets its courses against their prices. */
 function Row({ label, href }: { label: string; href: string }) {
   return (
-    <Link href={href} className="group flex items-baseline gap-2 py-2 text-[0.9375rem]">
-      <span className="text-ink-soft transition-colors group-hover:text-ink">{label}</span>
-      <span className="mb-[0.3em] flex-1 border-b border-dotted border-rule" />
+    <Link href={href} className="group flex items-baseline gap-3 py-2.5 text-[0.9375rem]">
+      <span className="font-display text-ink-soft transition-colors group-hover:text-ink">
+        {label}
+      </span>
+      <span className="mb-[0.3em] flex-1 border-b border-dotted border-rule transition-colors group-hover:border-accent" />
+      <span className="text-accent opacity-0 transition-opacity group-hover:opacity-100">→</span>
     </Link>
   );
 }
@@ -42,7 +46,7 @@ export default function ChildList({
   return (
     <>
       {items.length > 20 && (
-        <div className="mb-7 max-w-sm">
+        <div className="mb-8 max-w-sm">
           <input
             type="text"
             value={q}
@@ -55,16 +59,16 @@ export default function ChildList({
       {shown.length === 0 ? (
         <p className="text-sm text-ink-soft">No entry matches that. Try a shorter word.</p>
       ) : groupByPrice && !q ? (
-        <div className="space-y-9">
+        <div className="space-y-10">
           {group(shown).map(([price, rows]) => (
             <section key={price}>
-              <h2 className="mb-1 flex items-baseline gap-3 border-b-2 border-ink pb-1">
-                <span className="font-display text-base font-semibold">{price}</span>
-                <span className="ml-auto text-xs tabular-nums text-ink-soft">
+              <h2 className="mb-2 flex items-baseline gap-3 border-b border-accent/50 pb-2">
+                <span className="font-display text-base font-semibold tracking-tight">{price}</span>
+                <span className="ml-auto font-sans text-xs tabular-nums text-ink-soft">
                   {rows.length}
                 </span>
               </h2>
-              <div className="columns-1 sm:columns-2 sm:gap-x-10 lg:columns-3">
+              <div className="columns-1 sm:columns-2 sm:gap-x-12 lg:columns-3">
                 {rows.map((c) => (
                   <div key={c.id} className="break-inside-avoid">
                     <Row label={c.feature_label ?? c.display_name} href={c.url_path} />
@@ -75,7 +79,7 @@ export default function ChildList({
           ))}
         </div>
       ) : (
-        <div className="columns-1 sm:columns-2 sm:gap-x-10 lg:columns-3">
+        <div className="columns-1 sm:columns-2 sm:gap-x-12 lg:columns-3">
           {shown.map((c) => (
             <div key={c.id} className="break-inside-avoid">
               <Row label={c.display_name} href={c.url_path} />

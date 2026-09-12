@@ -47,49 +47,49 @@ export default async function EnquiryDetail({
   ];
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-10">
+    <main className="mx-auto max-w-2xl px-5 py-14">
       <Link
         href={canDecide ? "/seller" : "/c"}
-        className="text-sm text-ink-soft hover:text-ink"
+        className="text-sm text-ink-soft hover:text-accent transition-colors"
       >
-        {canDecide ? "Back to enquiries" : "Back to catalogue"}
+        {canDecide ? "← Back to enquiries" : "← Back to catalogue"}
       </Link>
 
-      {/* The sheet: a document with a stamp in the corner. */}
-      <article className="mt-4 rounded-[2px] border border-rule border-b-2 bg-sheet">
-        <header className="flex items-start justify-between gap-6 border-b-2 border-ink px-6 py-5">
+      {/* The sheet: a document with a seal in the corner. */}
+      <article className="mt-5 rounded-2xl border border-rule bg-sheet shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+        <header className="flex items-start justify-between gap-6 border-b border-accent/40 px-7 py-6">
           <div>
-            <h1 className="text-xl font-bold">Enquiry</h1>
-            <p className="mt-1 font-display text-2xl font-bold tabular-nums">
+            <h1 className="font-display text-xl font-bold">Enquiry</h1>
+            <p className="mt-1 font-display text-2xl font-bold tabular-nums text-accent">
               No. {String(e.id).padStart(6, "0")}
             </p>
           </div>
-          <div className="pt-2">
+          <div className="pt-1.5">
             <Stamp status={e.status} />
           </div>
         </header>
 
-        <dl className="px-6 py-2">
+        <dl className="px-7 py-2">
           {rows.map(([k, v]) => (
-            <div key={k} className="flex gap-4 border-b border-rule py-3 text-sm last:border-0">
+            <div key={k} className="flex gap-4 border-b border-rule py-3.5 text-sm last:border-0">
               <dt className="w-28 shrink-0 text-ink-soft">{k}</dt>
               <dd className="flex-1">{v}</dd>
             </div>
           ))}
         </dl>
 
-        <div className="border-t border-rule bg-paper px-6 py-5">
+        <div className="rounded-b-2xl border-t border-rule bg-paper/60 px-7 py-6">
           {errorMsg && (
-            <p className="mb-4 rounded-[2px] border-l-[3px] border-stamp bg-stamp/5 px-3 py-2 text-sm text-stamp">
+            <p className="mb-4 rounded-lg border-l-[3px] border-reject bg-reject/5 px-3.5 py-2.5 text-sm text-reject">
               {errorMsg}
             </p>
           )}
 
           {e.status === "PENDING" && canDecide ? (
-            <form action={decide} className="space-y-3">
+            <form action={decide} className="space-y-4">
               <input type="hidden" name="id" value={e.id} />
               <label className="block text-sm">
-                <span className="mb-1 block font-medium">
+                <span className="mb-1.5 block font-medium">
                   Note to the customer
                 </span>
                 <textarea name="note" rows={3} placeholder="Required when rejecting" />
@@ -97,13 +97,13 @@ export default async function EnquiryDetail({
               <div className="flex gap-3">
                 <button
                   name="decision" value="APPROVED"
-                  className="rounded-[2px] bg-approve px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
+                  className="rounded-full bg-approve px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
                 >
                   Approve
                 </button>
                 <button
                   name="decision" value="REJECTED"
-                  className="rounded-[2px] border border-stamp px-5 py-2.5 text-sm font-medium text-stamp hover:bg-stamp/5"
+                  className="rounded-full border border-reject px-6 py-2.5 text-sm font-medium text-reject transition-colors hover:bg-reject/5"
                 >
                   Reject
                 </button>

@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Bitter, Public_Sans } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
-const bitter = Bitter({
+const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["600", "700"],
-  variable: "--font-bitter",
+  style: ["normal", "italic"],
+  variable: "--font-display-face",
 });
 
-const publicSans = Public_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-public-sans",
+  variable: "--font-sans-face",
 });
 
 export const metadata: Metadata = {
@@ -25,10 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${bitter.variable} ${publicSans.variable}`}>
-      <body>
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <body className="flex min-h-screen flex-col">
         <Header />
-        {children}
+        <div className="flex-1">{children}</div>
+        <Footer />
       </body>
     </html>
   );
