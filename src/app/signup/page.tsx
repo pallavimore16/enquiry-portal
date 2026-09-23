@@ -37,7 +37,7 @@ export default function SignupPage() {
 
   return (
     <main className="mx-auto max-w-sm px-5 py-20">
-      <div className="rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+      <div className="rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(23,24,28,0.04),0_12px_32px_-16px_rgba(23,24,28,0.14)]">
         <h1 className="mb-1 font-display text-xl font-bold">Create an account</h1>
         <p className="mb-6 border-b border-accent/40 pb-4 text-sm text-ink-soft">
           Needed so sellers can reply to your enquiries.

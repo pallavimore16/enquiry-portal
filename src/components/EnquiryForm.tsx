@@ -80,7 +80,7 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   if (loggedIn === false) {
     return (
-      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(23,24,28,0.04),0_12px_32px_-16px_rgba(23,24,28,0.14)]">
         <h2 className="font-display text-lg font-semibold">Log in to send an enquiry</h2>
         <p className="mt-1.5 text-sm text-ink-soft">
           Sellers reply by email, so we need an account to send their answer to.
@@ -101,7 +101,7 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   if (done !== null) {
     return (
-      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+      <div className="max-w-lg rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(23,24,28,0.04),0_12px_32px_-16px_rgba(23,24,28,0.14)]">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-lg font-semibold">Enquiry sent</h2>
@@ -131,7 +131,7 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
 
   return (
     /* One column, capped near 34rem — a form is read, not scanned. */
-    <div className="max-w-[34rem] rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+    <div className="max-w-[34rem] rounded-2xl border border-rule bg-sheet p-7 shadow-[0_1px_2px_rgba(23,24,28,0.04),0_12px_32px_-16px_rgba(23,24,28,0.14)]">
       <h2 className="mb-6 border-b border-accent/40 pb-4 font-display text-lg font-semibold">
         Send an enquiry
       </h2>
@@ -160,7 +160,7 @@ export default function EnquiryForm({ categoryId }: { categoryId: number }) {
             type="checkbox"
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
-            className="mt-1 h-4 w-4 shrink-0 accent-[#ad56c4]"
+            className="mt-1 h-4 w-4 shrink-0 accent-[#17181c]"
           />
           <span>
             Share my name, address and phone number with the seller for this enquiry.

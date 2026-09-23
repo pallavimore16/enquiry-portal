@@ -29,7 +29,7 @@ export default function CategoryGrid({
   return (
     <>
       {searchable && items.length > 8 && (
-        <div className="mb-8 max-w-sm">
+        <div className="mb-6 max-w-sm">
           <input
             type="text"
             value={q}
@@ -42,9 +42,13 @@ export default function CategoryGrid({
       {shown.length === 0 ? (
         <p className="text-sm text-ink-soft">No entry matches that. Try a shorter word.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {shown.map((c, i) => (
-            <CategoryCard key={c.id} name={c.display_name} href={c.url_path} colorIndex={i} />
+        /* Masonry columns, not a fixed-row grid: each brick's own height
+           decides where the next one in its column starts, so columns
+           drift out of line with each other — the "not lined up
+           row-to-row" look, done responsively with no JS. */
+        <div className="columns-3 gap-2.5 sm:columns-5 md:columns-7 xl:columns-9">
+          {shown.map((c) => (
+            <CategoryCard key={c.id} name={c.display_name} href={c.url_path} />
           ))}
         </div>
       )}

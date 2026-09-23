@@ -56,7 +56,7 @@ export default async function EnquiryDetail({
       </Link>
 
       {/* The sheet: a document with a seal in the corner. */}
-      <article className="mt-5 rounded-2xl border border-rule bg-sheet shadow-[0_1px_2px_rgba(36,17,40,0.05),0_12px_32px_-16px_rgba(173,86,196,0.22)]">
+      <article className="mt-5 rounded-2xl border border-rule bg-sheet shadow-[0_1px_2px_rgba(23,24,28,0.04),0_12px_32px_-16px_rgba(23,24,28,0.14)]">
         <header className="flex items-start justify-between gap-6 border-b border-accent/40 px-7 py-6">
           <div>
             <h1 className="font-display text-xl font-bold">Enquiry</h1>
